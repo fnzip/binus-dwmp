@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
+import pydeck as pdk
 import os
 
 # Load environment variables
@@ -33,9 +34,65 @@ page = st.sidebar.radio("Pilih Halaman", ["Dashboard Infografis", "Prediksi Biay
 
 if page == "Dashboard Infografis":
 	st.title("📊 Insurance Cost Dashboard")
-	st.subheader("Rerata biaya asuransi per region")
+
+	# US region coordinates (approximate)
 	region_avg = df.groupby("region")["charges"].mean().reset_index()
-	st.bar_chart(region_avg.set_index("region"))
+	# Define polygons (rectangles) for each region
+	region_polygons = {
+		"northeast": [[[-80, 40], [-80, 45], [-70, 45], [-70, 40]]],
+		"northwest": [[[-125, 45], [-125, 50], [-115, 50], [-115, 45]]],
+		"southeast": [[[-90, 30], [-90, 36], [-80, 36], [-80, 30]]],
+		"southwest": [[[-115, 30], [-115, 36], [-105, 36], [-105, 30]]],
+	}
+	region_colors = {
+		"northeast": [66, 135, 245, 120],    # blue
+		"northwest": [76, 175, 80, 120],     # green
+		"southeast": [255, 193, 7, 120],     # yellow
+		"southwest": [244, 67, 54, 120],     # red
+	}
+	# Prepare polygon data
+	polygon_data = []
+	for _, row in region_avg.iterrows():
+		region = row['region']
+		polygon_data.append({
+			"region": region,
+			"polygon": region_polygons[region],
+			"color": region_colors[region],
+			"charges": int(row['charges']),
+			"info": f"{region.capitalize()} (${int(row['charges']):,})",
+			"lat": np.mean([p[1] for p in region_polygons[region][0]]),
+			"lon": np.mean([p[0] for p in region_polygons[region][0]]),
+		})
+	polygon_df = pd.DataFrame(polygon_data)
+
+	st.subheader("Peta Rerata Biaya Asuransi per Region (US)")
+	polygon_layer = pdk.Layer(
+		"PolygonLayer",
+		data=polygon_df,
+		get_polygon="polygon",
+		get_fill_color="color",
+		get_line_color=[0,0,0,200],
+		pickable=True,
+		auto_highlight=True,
+	)
+	text_layer = pdk.Layer(
+		"TextLayer",
+		data=polygon_df,
+		get_position='[lon, lat]',
+		get_text='info',
+		get_color=[0, 0, 0, 255],
+		get_size=40,  # larger text for visibility
+		get_alignment_baseline="center",
+		get_anchor="middle",  # center the text horizontally
+	)
+	view_state = pdk.ViewState(
+		longitude=-95,
+		latitude=39,
+		zoom=2.5,
+		pitch=0,
+	)
+	tooltip = {"text": "{info}"}
+	st.pydeck_chart(pdk.Deck(layers=[polygon_layer, text_layer], initial_view_state=view_state, tooltip=tooltip))
 
 	st.subheader("Distribusi biaya perokok vs non-perokok")
 	import seaborn as sns
