@@ -1,2 +1,1 @@
-# binus-dwmp
-Binus Data Warehouse Mini Project
+# Binus Data Warehouse Mini Project
