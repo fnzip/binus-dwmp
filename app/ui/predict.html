@@ -4,6 +4,55 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Prediksi Biaya - Binus Insurance Cost</title>
+    <meta
+      name="description"
+      content="Prediksi biaya asuransi kesehatan berbasis data warehouse dan dashboard interaktif. Estimasi biaya, insight, dan analisis faktor demografi di Amerika Serikat."
+    />
+    <meta
+      name="keywords"
+      content="prediksi biaya asuransi, insurance cost, dashboard, data warehouse, medical insurance, analisis, region, demografi, BMI, smoker, children, sex, age, USA"
+    />
+    <meta name="author" content="Alfian Oktafireza" />
+    <meta property="og:title" content="Prediksi Biaya - Binus Insurance Cost" />
+    <meta
+      property="og:description"
+      content="Prediksi biaya asuransi kesehatan berbasis data warehouse dan dashboard interaktif. Estimasi biaya, insight, dan analisis faktor demografi di Amerika Serikat."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://github.com/fnzip/binus-dwmp" />
+    <meta
+      property="og:image"
+      content="https://opengraph.githubassets.com/f17b7c7b8d24866b900706745ac2952e226ae5fb8d9564cc5ddeb051f872c7fe/fnzip/binus-dwmp"
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Prediksi Biaya - Binus Insurance Cost",
+        "url": "https://github.com/fnzip/binus-dwmp",
+        "description": "Prediksi biaya asuransi kesehatan berbasis data warehouse dan dashboard interaktif. Estimasi biaya, insight, dan analisis faktor demografi di Amerika Serikat.",
+        "creator": {
+          "@type": "Organization",
+          "name": "Binus DWMP"
+        },
+        "keywords": [
+          "prediksi biaya asuransi",
+          "insurance cost",
+          "dashboard",
+          "data warehouse",
+          "medical insurance",
+          "analisis",
+          "region",
+          "demografi",
+          "BMI",
+          "smoker",
+          "children",
+          "sex",
+          "age",
+          "USA"
+        ]
+      }
+    </script>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -16,9 +65,22 @@
       <nav class="mb-4">
         <a href="/" class="btn btn-outline-primary me-2">Dashboard</a>
         <a href="/predict" class="btn btn-primary me-2">Prediksi Biaya</a>
-        <a href="https://github.com/fnzip/binus-dwmp" target="_blank" class="btn btn-outline-primary me-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-github mb-1" viewBox="0 0 16 16">
-            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
+        <a
+          href="https://github.com/fnzip/binus-dwmp"
+          target="_blank"
+          class="btn btn-outline-primary me-2"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-github mb-1"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"
+            />
           </svg>
         </a>
       </nav>
@@ -28,7 +90,16 @@
           <form id="predictForm" class="row g-3">
             <div class="col-md-6">
               <label for="age" class="form-label">Usia</label>
-              <input type="number" class="form-control" id="age" name="age" min="18" max="100" value="30" required />
+              <input
+                type="number"
+                class="form-control"
+                id="age"
+                name="age"
+                min="18"
+                max="100"
+                value="30"
+                required
+              />
             </div>
             <div class="col-md-6">
               <label for="sex" class="form-label">Jenis Kelamin</label>
@@ -39,7 +110,16 @@
             </div>
             <div class="col-md-6">
               <label for="children" class="form-label">Jumlah Anak</label>
-              <input type="number" class="form-control" id="children" name="children" min="0" max="10" value="0" required />
+              <input
+                type="number"
+                class="form-control"
+                id="children"
+                name="children"
+                min="0"
+                max="10"
+                value="0"
+                required
+              />
             </div>
             <div class="col-md-6">
               <label for="smoker" class="form-label">Status Merokok</label>
@@ -50,14 +130,26 @@
             </div>
             <div class="col-md-6">
               <label for="bmi" class="form-label">BMI</label>
-              <input type="number" class="form-control" id="bmi" name="bmi" min="10" max="60" step="0.1" value="25.0" required />
+              <input
+                type="number"
+                class="form-control"
+                id="bmi"
+                name="bmi"
+                min="10"
+                max="60"
+                step="0.1"
+                value="25.0"
+                required
+              />
             </div>
             <div class="col-md-6">
               <label for="region" class="form-label">Region</label>
               <select class="form-select" id="region" name="region"></select>
             </div>
             <div class="col-12">
-              <button type="submit" class="btn btn-primary">Estimasi Biaya</button>
+              <button type="submit" class="btn btn-primary">
+                Estimasi Biaya
+              </button>
             </div>
           </form>
         </div>
@@ -65,6 +157,7 @@
           <div id="predictResult" class="mt-4"></div>
         </div>
       </div>
+
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -99,7 +192,9 @@
         })
           .then((r) => r.json())
           .then((res) => {
-            document.getElementById("predictResult").innerHTML = `<div class='alert alert-success'>Estimasi biaya: <b>$${res.estimated_charges.toLocaleString()}</b>/tahun</div><ul>${res.suggestion
+            document.getElementById(
+              "predictResult"
+            ).innerHTML = `<div class='alert alert-success'>Estimasi biaya: <b>$${res.estimated_charges.toLocaleString()}</b>/tahun</div><ul>${res.suggestion
               .map((s) => {
                 if (s.includes("berhenti merokok")) return `<li>🚭 ${s}</li>`;
                 if (s.includes("BMI")) return `<li>⚖️ ${s}</li>`;

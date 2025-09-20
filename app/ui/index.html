@@ -4,6 +4,56 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Binus Insurance Cost</title>
+    <meta
+      name="description"
+      content="Dashboard interaktif dan data warehouse sederhana untuk analisis biaya asuransi kesehatan di Amerika Serikat. Visualisasi biaya rata-rata per region, analisis faktor demografi, dan estimasi biaya asuransi berdasarkan data pengguna."
+    />
+    <meta
+      name="keywords"
+      content="asuransi kesehatan, insurance cost, dashboard, data warehouse, medical insurance, analisis, region, demografi, prediksi, BMI, smoker, children, sex, age, USA"
+    />
+    <meta name="author" content="Alfian Oktafireza" />
+    <meta property="og:title" content="Binus Insurance Cost Dashboard" />
+    <meta
+      property="og:description"
+      content="Dashboard interaktif dan data warehouse sederhana untuk analisis biaya asuransi kesehatan di Amerika Serikat."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://github.com/fnzip/binus-dwmp" />
+    <meta
+      property="og:image"
+      content="https://opengraph.githubassets.com/f17b7c7b8d24866b900706745ac2952e226ae5fb8d9564cc5ddeb051f872c7fe/fnzip/binus-dwmp"
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Binus Insurance Cost Dashboard",
+        "url": "https://github.com/fnzip/binus-dwmp",
+        "description": "Dashboard interaktif dan data warehouse sederhana untuk analisis biaya asuransi kesehatan di Amerika Serikat. Visualisasi biaya rata-rata per region, analisis faktor demografi, dan estimasi biaya asuransi berdasarkan data pengguna.",
+        "creator": {
+          "@type": "Organization",
+          "name": "Binus DWMP"
+        },
+        "keywords": [
+          "asuransi kesehatan",
+          "insurance cost",
+          "dashboard",
+          "data warehouse",
+          "medical insurance",
+          "analisis",
+          "region",
+          "demografi",
+          "prediksi",
+          "BMI",
+          "smoker",
+          "children",
+          "sex",
+          "age",
+          "USA"
+        ]
+      }
+    </script>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -17,11 +67,25 @@
 
       <nav class="mb-4">
         <a href="/" class="btn btn-primary me-2">Dashboard</a>
-        <a href="/predict" class="btn btn-outline-primary me-2">Prediksi Biaya</a
+        <a href="/predict" class="btn btn-outline-primary me-2"
+          >Prediksi Biaya</a
         >
-        <a href="https://github.com/fnzip/binus-dwmp" target="_blank" class="btn btn-outline-primary">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-github mb-1" viewBox="0 0 16 16">
-            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
+        <a
+          href="https://github.com/fnzip/binus-dwmp"
+          target="_blank"
+          class="btn btn-outline-primary"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-github mb-1"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"
+            />
           </svg>
         </a>
       </nav>
@@ -49,6 +113,83 @@
           <h5>Correlation Matrix</h5>
           <canvas id="corrChart"></canvas>
           <div id="corrTable" class="mt-3"></div>
+        </div>
+      </div>
+      <!-- Project Description -->
+      <div class="row mt-5">
+        <div class="col-12">
+          <hr />
+          <h3 class="mb-3">
+            📊 Medical Insurance Cost Data Warehouse & Dashboard
+          </h3>
+          <h5>🎯 Project &amp; Tujuan</h5>
+          <p>
+            Project ini membangun data warehouse sederhana dan dashboard
+            interaktif berbasis Streamlit untuk menganalisis biaya asuransi
+            kesehatan di Amerika Serikat.
+          </p>
+          <ul>
+            <li>
+              Memberikan infografis tentang biaya rata-rata asuransi kesehatan
+              per region.
+            </li>
+            <li>
+              Menganalisis faktor demografi (usia, jenis kelamin, jumlah anak,
+              BMI, status merokok) terhadap biaya asuransi.
+            </li>
+            <li>
+              Menyediakan aplikasi mini tempat pengguna bisa memasukkan data
+              (usia, sex, anak, smoker, region) untuk mendapat estimasi biaya
+              asuransi serta insight seperti: “Jika Anda tidak merokok, biaya
+              akan berkurang sekian USD”.
+            </li>
+          </ul>
+          <h5>📂 Sumber Data</h5>
+          <p>
+            Dataset diambil dari Kaggle – Medical Insurance Cost Dataset<br />
+            <a
+              href="https://www.kaggle.com/datasets/mosapabdelghany/medical-insurance-cost-dataset"
+              target="_blank"
+              >Kaggle Insurance Dataset</a
+            >
+          </p>
+          <p>Dataset berisi 1338 record dengan kolom:</p>
+          <ul>
+            <li><b>age</b>: usia peserta</li>
+            <li><b>sex</b>: jenis kelamin (male/female)</li>
+            <li><b>bmi</b>: body mass index</li>
+            <li><b>children</b>: jumlah anak yang ditanggung</li>
+            <li><b>smoker</b>: status perokok (yes/no)</li>
+            <li>
+              <b>region</b>: wilayah tempat tinggal (northeast, northwest,
+              southeast, southwest)
+            </li>
+            <li><b>charges</b>: biaya asuransi kesehatan</li>
+          </ul>
+          <h5>🏗️ Schema yang Digunakan</h5>
+          <p>Project ini menggunakan Star Schema untuk data warehouse.</p>
+          <ul>
+            <li>
+              <b>Fact Table:</b> fact_insurance<br />
+              Kolom: insurance_id, age_id, sex_id, bmi, children_id, smoker_id,
+              region_id, charges
+            </li>
+            <li>
+              <b>Dimension Tables:</b>
+              <ul>
+                <li>dim_age (kategori usia: 18–25, 26–35, 36–50, 50+)</li>
+                <li>dim_sex (jenis kelamin)</li>
+                <li>dim_bmi (kategori BMI → opsional)</li>
+                <li>dim_children (jumlah anak)</li>
+                <li>dim_smoker (status perokok)</li>
+                <li>dim_region (wilayah tinggal)</li>
+              </ul>
+            </li>
+          </ul>
+          <p>
+            Model ini dipilih karena sederhana, query OLAP lebih cepat, dan
+            mudah divisualisasikan.
+          </p>
         </div>
       </div>
     </div>
