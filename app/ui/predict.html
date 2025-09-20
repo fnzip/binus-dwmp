@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Prediksi Biaya Asuransi</title>
+    <title>Prediksi Biaya - Binus Insurance Cost</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -12,70 +12,59 @@
   <body class="bg-light">
     <div class="container py-4">
       <h1 class="mb-4">Prediksi Biaya Asuransi</h1>
-      <form id="predictForm" class="row g-3">
-        <div class="col-md-2">
-          <label for="age" class="form-label">Usia</label>
-          <input
-            type="number"
-            class="form-control"
-            id="age"
-            name="age"
-            min="18"
-            max="100"
-            value="30"
-            required
-          />
+
+      <nav class="mb-4">
+        <a href="/" class="btn btn-outline-primary me-2">Dashboard</a>
+        <a href="/predict" class="btn btn-primary me-2">Prediksi Biaya</a>
+        <a href="https://github.com/fnzip/binus-dwmp" target="_blank" class="btn btn-outline-primary me-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-github mb-1" viewBox="0 0 16 16">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
+          </svg>
+        </a>
+      </nav>
+
+      <div class="row">
+        <div class="col-md-7">
+          <form id="predictForm" class="row g-3">
+            <div class="col-md-6">
+              <label for="age" class="form-label">Usia</label>
+              <input type="number" class="form-control" id="age" name="age" min="18" max="100" value="30" required />
+            </div>
+            <div class="col-md-6">
+              <label for="sex" class="form-label">Jenis Kelamin</label>
+              <select class="form-select" id="sex" name="sex">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="children" class="form-label">Jumlah Anak</label>
+              <input type="number" class="form-control" id="children" name="children" min="0" max="10" value="0" required />
+            </div>
+            <div class="col-md-6">
+              <label for="smoker" class="form-label">Status Merokok</label>
+              <select class="form-select" id="smoker" name="smoker">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="bmi" class="form-label">BMI</label>
+              <input type="number" class="form-control" id="bmi" name="bmi" min="10" max="60" step="0.1" value="25.0" required />
+            </div>
+            <div class="col-md-6">
+              <label for="region" class="form-label">Region</label>
+              <select class="form-select" id="region" name="region"></select>
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary">Estimasi Biaya</button>
+            </div>
+          </form>
         </div>
-        <div class="col-md-2">
-          <label for="sex" class="form-label">Jenis Kelamin</label>
-          <select class="form-select" id="sex" name="sex">
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
+        <div class="col-md-5">
+          <div id="predictResult" class="mt-4"></div>
         </div>
-        <div class="col-md-2">
-          <label for="children" class="form-label">Jumlah Anak</label>
-          <input
-            type="number"
-            class="form-control"
-            id="children"
-            name="children"
-            min="0"
-            max="10"
-            value="0"
-            required
-          />
-        </div>
-        <div class="col-md-2">
-          <label for="smoker" class="form-label">Status Merokok</label>
-          <select class="form-select" id="smoker" name="smoker">
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-          </select>
-        </div>
-        <div class="col-md-2">
-          <label for="bmi" class="form-label">BMI</label>
-          <input
-            type="number"
-            class="form-control"
-            id="bmi"
-            name="bmi"
-            min="10"
-            max="60"
-            step="0.1"
-            value="25.0"
-            required
-          />
-        </div>
-        <div class="col-md-2">
-          <label for="region" class="form-label">Region</label>
-          <select class="form-select" id="region" name="region"></select>
-        </div>
-        <div class="col-12">
-          <button type="submit" class="btn btn-primary">Estimasi Biaya</button>
-        </div>
-      </form>
-      <div id="predictResult" class="mt-4"></div>
+      </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -110,10 +99,13 @@
         })
           .then((r) => r.json())
           .then((res) => {
-            document.getElementById(
-              "predictResult"
-            ).innerHTML = `<div class='alert alert-success'>Estimasi biaya: <b>$${res.estimated_charges.toLocaleString()}</b>/tahun</div><ul>${res.suggestion
-              .map((s) => `<li>${s}</li>`)
+            document.getElementById("predictResult").innerHTML = `<div class='alert alert-success'>Estimasi biaya: <b>$${res.estimated_charges.toLocaleString()}</b>/tahun</div><ul>${res.suggestion
+              .map((s) => {
+                if (s.includes("berhenti merokok")) return `<li>🚭 ${s}</li>`;
+                if (s.includes("BMI")) return `<li>⚖️ ${s}</li>`;
+                if (s.includes("gaya hidup sehat")) return `<li>💪 ${s}</li>`;
+                return `<li>ℹ️ ${s}</li>`;
+              })
               .join("")}</ul>`;
           });
       };

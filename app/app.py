@@ -38,8 +38,9 @@ def region_avg():
 
 @app.route('/api/boxplot-smoker', methods=['GET'])
 def boxplot_smoker():
-    # Return data for boxplot: charges grouped by smoker status
-    data = df.groupby("smoker")["charges"].apply(list).reset_index()
+    # Return average charges for each smoker status
+    data = df.groupby("smoker")["charges"].mean().reset_index()
+    data.rename(columns={"charges": "avg_charges"}, inplace=True)
     return jsonify(data.to_dict(orient="records"))
 
 @app.route('/api/age-avg', methods=['GET'])
