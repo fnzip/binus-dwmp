@@ -20,7 +20,7 @@ CREATE TABLE dim_age (
 
 CREATE TABLE dim_children (
     children_id SERIAL PRIMARY KEY,
-    jumlah_anak INT UNIQUE
+    child_count INT UNIQUE
 );
 
 CREATE TABLE fact_insurance (

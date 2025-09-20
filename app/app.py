@@ -18,7 +18,7 @@ DB_PASS = os.getenv("DB_PASS")
 # Connect to DB and load data
 engine = create_engine(f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
 query = """
-SELECT a.age_group AS age, s.sex, f.bmi, c.jumlah_anak AS children, sm.status AS smoker, f.charges, r.region
+SELECT a.age_group AS age, s.sex, f.bmi, c.child_count AS children, sm.status AS smoker, f.charges, r.region
 FROM fact_insurance f
 JOIN dim_age a ON f.age_id = a.age_id
 JOIN dim_sex s ON f.sex_id = s.sex_id

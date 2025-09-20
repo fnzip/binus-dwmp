@@ -24,31 +24,31 @@ df["age_group"] = pd.cut(
 # 3. Connect PostgreSQL
 engine = create_engine(f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
 
-# 4. Load dimension tables (insert unik)
+# 4. Load dimension tables (unique insert)
 df[["sex"]].drop_duplicates().to_sql("dim_sex", engine, if_exists="append", index=False)
 df[["smoker"]].drop_duplicates().rename(columns={"smoker": "status"}).to_sql("dim_smoker", engine, if_exists="append", index=False)
 df[["region"]].drop_duplicates().to_sql("dim_region", engine, if_exists="append", index=False)
 df[["age_group"]].drop_duplicates().to_sql("dim_age", engine, if_exists="append", index=False)
-df[["children"]].drop_duplicates().rename(columns={"children": "jumlah_anak"}).to_sql("dim_children", engine, if_exists="append", index=False)
+df[["children"]].drop_duplicates().rename(columns={"children": "child_count"}).to_sql("dim_children", engine, if_exists="append", index=False)
 
-# 5. Ambil dimensi dari DB untuk mapping
+# 5. Retrieve dimensions from DB for mapping
 dim_sex = pd.read_sql("SELECT sex_id, sex FROM dim_sex", engine)
 dim_smoker = pd.read_sql("SELECT smoker_id, status FROM dim_smoker", engine)
 dim_region = pd.read_sql("SELECT region_id, region FROM dim_region", engine)
 dim_age = pd.read_sql("SELECT age_id, age_group FROM dim_age", engine)
-dim_children = pd.read_sql("SELECT children_id, jumlah_anak FROM dim_children", engine)
+dim_children = pd.read_sql("SELECT children_id, child_count FROM dim_children", engine)
 
-# 6. Merge ke df → ganti string jadi ID
+# 6. Merge to df → replace strings with IDs
 df = df.merge(dim_sex, on="sex", how="left") \
   .merge(dim_smoker, left_on="smoker", right_on="status", how="left") \
   .merge(dim_region, on="region", how="left") \
   .merge(dim_age, on="age_group", how="left") \
-  .merge(dim_children, left_on="children", right_on="jumlah_anak", how="left")
+  .merge(dim_children, left_on="children", right_on="child_count", how="left")
 
-# 7. Pilih kolom sesuai fact schema
+# 7. Select columns according to fact schema
 fact_df = df[["age_id", "sex_id", "bmi", "children_id", "smoker_id", "region_id", "charges"]]
 
 # 8. Insert fact table
 fact_df.to_sql("fact_insurance", engine, if_exists="append", index=False)
 
-print("✅ ETL selesai, data masuk ke dimensi + fact_insurance")
+print("✅ ETL completed, data loaded into dimensions + fact_insurance")
