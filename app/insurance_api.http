@@ -1,0 +1,29 @@
+### Region average charges
+GET http://localhost:5000/api/region-avg
+Accept: application/json
+
+### Boxplot data for smoker vs non-smoker
+GET http://localhost:5000/api/boxplot-smoker
+Accept: application/json
+
+### Average charges by age
+GET http://localhost:5000/api/age-avg
+Accept: application/json
+
+### Correlation matrix
+GET http://localhost:5000/api/corr
+Accept: application/json
+
+### Predict insurance charges
+POST http://localhost:5000/api/predict
+Content-Type: application/json
+Accept: application/json
+
+{
+  "age": 30,
+  "sex": "male",
+  "children": 2,
+  "smoker": "yes",
+  "bmi": 28.5,
+  "region": "southeast"
+}

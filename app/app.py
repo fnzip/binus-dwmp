@@ -1,10 +1,8 @@
-
-import streamlit as st
+from flask import Flask, request, jsonify
 import pandas as pd
 import numpy as np
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
-import pydeck as pdk
 import os
 
 # Load environment variables
@@ -15,7 +13,6 @@ DB_NAME = os.getenv("DB_NAME")
 DB_USER = os.getenv("DB_USER")
 DB_PASS = os.getenv("DB_PASS")
 
-# Connect to DB and load data
 engine = create_engine(f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
 query = """
 SELECT a.age_group AS age, s.sex, f.bmi, c.child_count AS children, sm.status AS smoker, f.charges, r.region
@@ -28,148 +25,100 @@ JOIN dim_region r ON f.region_id = r.region_id;
 """
 df = pd.read_sql(query, engine)
 
-# Sidebar navigation
-st.sidebar.title("Menu")
-page = st.sidebar.radio("Pilih Halaman", ["Dashboard Infografis", "Prediksi Biaya"])
+from flask import render_template, send_from_directory
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "ui")
+app = Flask(__name__, static_folder=STATIC_DIR, template_folder=STATIC_DIR)
 
-if page == "Dashboard Infografis":
-	st.title("📊 Insurance Cost Dashboard")
+@app.route('/api/region-avg', methods=['GET'])
+def region_avg():
+    region_avg = df.groupby("region")["charges"].mean().reset_index()
+    return jsonify(region_avg.to_dict(orient="records"))
 
-	# US region coordinates (approximate)
-	region_avg = df.groupby("region")["charges"].mean().reset_index()
-	# Define polygons (rectangles) for each region
-	region_polygons = {
-		"northeast": [[[-80, 40], [-80, 45], [-70, 45], [-70, 40]]],
-		"northwest": [[[-125, 45], [-125, 50], [-115, 50], [-115, 45]]],
-		"southeast": [[[-90, 30], [-90, 36], [-80, 36], [-80, 30]]],
-		"southwest": [[[-115, 30], [-115, 36], [-105, 36], [-105, 30]]],
-	}
-	region_colors = {
-		"northeast": [66, 135, 245, 120],    # blue
-		"northwest": [76, 175, 80, 120],     # green
-		"southeast": [255, 193, 7, 120],     # yellow
-		"southwest": [244, 67, 54, 120],     # red
-	}
-	# Prepare polygon data
-	polygon_data = []
-	for _, row in region_avg.iterrows():
-		region = row['region']
-		polygon_data.append({
-			"region": region,
-			"polygon": region_polygons[region],
-			"color": region_colors[region],
-			"charges": int(row['charges']),
-			"info": f"{region.capitalize()} (${int(row['charges']):,})",
-			"lat": np.mean([p[1] for p in region_polygons[region][0]]),
-			"lon": np.mean([p[0] for p in region_polygons[region][0]]),
-		})
-	polygon_df = pd.DataFrame(polygon_data)
+@app.route('/api/boxplot-smoker', methods=['GET'])
+def boxplot_smoker():
+    # Return data for boxplot: charges grouped by smoker status
+    data = df.groupby("smoker")["charges"].apply(list).reset_index()
+    return jsonify(data.to_dict(orient="records"))
 
-	st.subheader("Peta Rerata Biaya Asuransi per Region (US)")
-	polygon_layer = pdk.Layer(
-		"PolygonLayer",
-		data=polygon_df,
-		get_polygon="polygon",
-		get_fill_color="color",
-		get_line_color=[0,0,0,200],
-		pickable=True,
-		auto_highlight=True,
-	)
-	text_layer = pdk.Layer(
-		"TextLayer",
-		data=polygon_df,
-		get_position='[lon, lat]',
-		get_text='info',
-		get_color=[0, 0, 0, 255],
-		get_size=40,  # larger text for visibility
-		get_alignment_baseline="center",
-		get_anchor="middle",  # center the text horizontally
-	)
-	view_state = pdk.ViewState(
-		longitude=-95,
-		latitude=39,
-		zoom=2.5,
-		pitch=0,
-	)
-	tooltip = {"text": "{info}"}
-	st.pydeck_chart(pdk.Deck(layers=[polygon_layer, text_layer], initial_view_state=view_state, tooltip=tooltip))
+@app.route('/api/age-avg', methods=['GET'])
+def age_avg():
+    age_avg = df.groupby("age")["charges"].mean().reset_index()
+    return jsonify(age_avg.to_dict(orient="records"))
 
-	st.subheader("Distribusi biaya perokok vs non-perokok")
-	import seaborn as sns
-	import matplotlib.pyplot as plt
-	fig, ax = plt.subplots()
-	sns.boxplot(x="smoker", y="charges", data=df, ax=ax)
-	st.pyplot(fig)
+@app.route('/api/corr', methods=['GET'])
+def corr():
+    corr = df[["bmi", "children", "charges"]].corr()
+    return jsonify(corr.to_dict())
 
-	st.subheader("Rerata biaya berdasarkan usia")
-	age_avg = df.groupby("age")["charges"].mean().reset_index()
-	st.line_chart(age_avg.set_index("age"))
+@app.route('/api/predict', methods=['POST'])
+def predict():
+    data = request.json
+    age = data.get("age", 30)
+    sex = data.get("sex", "male")
+    children = data.get("children", 0)
+    smoker = data.get("smoker", "no")
+    bmi = data.get("bmi", 25.0)
+    region = data.get("region", "southeast")
 
-	st.subheader("Korelasi antar fitur (heatmap)")
-	# Only use numeric columns for correlation
-	corr = df[["bmi", "children", "charges"]].corr()
-	fig2, ax2 = plt.subplots()
-	sns.heatmap(corr, annot=True, cmap="coolwarm", ax=ax2)
-	st.pyplot(fig2)
+    base = 2000
+    coef_age = 250
+    coef_bmi = 350
+    coef_children = 400
+    coef_smoker = 12000
+    coef_sex = -500 if sex == "female" else 0
+    coef_region = 0
+    if region == "southeast":
+        coef_region = 1000
+    elif region == "southwest":
+        coef_region = 500
+    elif region == "northwest":
+        coef_region = 700
+    elif region == "northeast":
+        coef_region = 800
 
-	st.markdown("""
-	### Insight & Saran
-	- **Perokok** rata-rata mengeluarkan biaya jauh lebih tinggi (sering >2× non-perokok).
-	- **BMI tinggi** berkorelasi dengan kenaikan biaya.
-	- Ada variasi regional → Southeast cenderung lebih tinggi.
-	""")
+    est_charges = (
+        base
+        + coef_age * (age / 50)
+        + coef_bmi * (bmi / 30)
+        + coef_children * children
+        + (coef_smoker if smoker == "yes" else 0)
+        + coef_sex
+        + coef_region
+    )
 
-elif page == "Prediksi Biaya":
-	st.title("💡 Prediksi Biaya Asuransi & Saran")
-	st.write("Masukkan data Anda untuk estimasi biaya dan rekomendasi personal.")
+    suggestion = []
+    if smoker == "yes":
+        non_smoker_charges = est_charges - coef_smoker
+        suggestion.append(f"Jika Anda berhenti merokok, estimasi biaya bisa turun ke ${non_smoker_charges:,.0f}/tahun (hemat ${coef_smoker:,.0f}).")
+    else:
+        suggestion.append("Biaya Anda sudah optimal terkait status merokok.")
+    suggestion.append("Jaga BMI di kisaran sehat untuk menekan biaya.")
+    suggestion.append("Pertimbangkan gaya hidup sehat untuk mengurangi risiko dan biaya.")
+    if region == "southeast":
+        suggestion.append("Region Southeast cenderung lebih tinggi, pertimbangkan faktor regional jika relevan.")
 
-	# Form input
-	age = st.number_input("Usia", min_value=18, max_value=100, value=30)
-	sex = st.selectbox("Jenis Kelamin", ["male", "female"])
-	children = st.number_input("Jumlah Anak", min_value=0, max_value=10, value=0)
-	smoker = st.selectbox("Status Merokok", ["yes", "no"])
-	bmi = st.number_input("BMI", min_value=10.0, max_value=60.0, value=25.0)
-	region = st.selectbox("Region", sorted(df["region"].unique()))
+    return jsonify({
+        "estimated_charges": round(est_charges, 2),
+        "suggestion": suggestion
+    })
 
-	# Simple prediction model (linear regression coefficients from public dataset)
-	# These are example coefficients, adjust as needed
-	base = 2000
-	coef_age = 250
-	coef_bmi = 350
-	coef_children = 400
-	coef_smoker = 12000
-	coef_sex = -500 if sex == "female" else 0
-	coef_region = 0
-	if region == "southeast":
-		coef_region = 1000
-	elif region == "southwest":
-		coef_region = 500
-	elif region == "northwest":
-		coef_region = 700
-	elif region == "northeast":
-		coef_region = 800
 
-	est_charges = (
-		base
-		+ coef_age * (age / 50)
-		+ coef_bmi * (bmi / 30)
-		+ coef_children * children
-		+ (coef_smoker if smoker == "yes" else 0)
-		+ coef_sex
-		+ coef_region
-	)
+# Home page for dashboard stats
+@app.route("/")
+def index():
+    return render_template("index.html")
 
-	if st.button("Estimasi Biaya"):
-		st.success(f"Estimasi biaya Anda: ${est_charges:,.0f}/tahun.")
-		if smoker == "yes":
-			non_smoker_charges = est_charges - coef_smoker
-			st.info(f"Jika Anda berhenti merokok, estimasi biaya bisa turun ke ${non_smoker_charges:,.0f}/tahun (hemat ${coef_smoker:,.0f}).")
-		else:
-			st.info("Biaya Anda sudah optimal terkait status merokok.")
+# Prediction page
+@app.route("/predict")
+def predict_page():
+    return render_template("predict.html")
 
-		st.markdown("""
-		#### Saran Personal
-		- Jaga BMI di kisaran sehat untuk menekan biaya.
-		- Pertimbangkan gaya hidup sehat untuk mengurangi risiko dan biaya.
-		- Region Southeast cenderung lebih tinggi, pertimbangkan faktor regional jika relevan.
-		""")
+# Serve static files (js, svg, etc.) from /ui
+@app.route("/ui/<path:filename>")
+def ui_static(filename):
+    return send_from_directory(app.static_folder, filename)
+
+if __name__ == "__main__":
+    app.run(debug=True)

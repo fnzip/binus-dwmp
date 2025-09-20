@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prediksi Biaya Asuransi</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-light">
+    <div class="container py-4">
+      <h1 class="mb-4">Prediksi Biaya Asuransi</h1>
+      <form id="predictForm" class="row g-3">
+        <div class="col-md-2">
+          <label for="age" class="form-label">Usia</label>
+          <input
+            type="number"
+            class="form-control"
+            id="age"
+            name="age"
+            min="18"
+            max="100"
+            value="30"
+            required
+          />
+        </div>
+        <div class="col-md-2">
+          <label for="sex" class="form-label">Jenis Kelamin</label>
+          <select class="form-select" id="sex" name="sex">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label for="children" class="form-label">Jumlah Anak</label>
+          <input
+            type="number"
+            class="form-control"
+            id="children"
+            name="children"
+            min="0"
+            max="10"
+            value="0"
+            required
+          />
+        </div>
+        <div class="col-md-2">
+          <label for="smoker" class="form-label">Status Merokok</label>
+          <select class="form-select" id="smoker" name="smoker">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label for="bmi" class="form-label">BMI</label>
+          <input
+            type="number"
+            class="form-control"
+            id="bmi"
+            name="bmi"
+            min="10"
+            max="60"
+            step="0.1"
+            value="25.0"
+            required
+          />
+        </div>
+        <div class="col-md-2">
+          <label for="region" class="form-label">Region</label>
+          <select class="form-select" id="region" name="region"></select>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary">Estimasi Biaya</button>
+        </div>
+      </form>
+      <div id="predictResult" class="mt-4"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Fill region select
+      fetch("/api/region-avg")
+        .then((r) => r.json())
+        .then((data) => {
+          const regionSelect = document.getElementById("region");
+          data.forEach((d) => {
+            const opt = document.createElement("option");
+            opt.value = d.region;
+            opt.textContent = d.region;
+            regionSelect.appendChild(opt);
+          });
+        });
+      // Predict form
+      document.getElementById("predictForm").onsubmit = function (e) {
+        e.preventDefault();
+        const form = e.target;
+        const payload = {
+          age: Number(form.age.value),
+          sex: form.sex.value,
+          children: Number(form.children.value),
+          smoker: form.smoker.value,
+          bmi: Number(form.bmi.value),
+          region: form.region.value,
+        };
+        fetch("/api/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        })
+          .then((r) => r.json())
+          .then((res) => {
+            document.getElementById(
+              "predictResult"
+            ).innerHTML = `<div class='alert alert-success'>Estimasi biaya: <b>$${res.estimated_charges.toLocaleString()}</b>/tahun</div><ul>${res.suggestion
+              .map((s) => `<li>${s}</li>`)
+              .join("")}</ul>`;
+          });
+      };
+    </script>
+  </body>
+</html>
