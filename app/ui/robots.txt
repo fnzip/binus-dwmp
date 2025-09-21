@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /ui/
+Disallow: /api/
+
+Sitemap: https://asura.alfian.app/sitemap.xml

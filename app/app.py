@@ -116,6 +116,14 @@ def index():
 def predict_page():
     return render_template("predict.html")
 
+@app.route("/robots.txt")
+def robots():
+    return send_from_directory(app.static_folder, "robots.txt")
+
+@app.route("/sitemap.xml")
+def sitemap():
+    return send_from_directory(app.static_folder, "sitemap.xml")
+
 # Serve static files (js, svg, etc.) from /ui
 @app.route("/ui/<path:filename>")
 def ui_static(filename):
